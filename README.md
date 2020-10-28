@@ -1,14 +1,7 @@
 # weather-collector
 
-Add a short description here!
-
+Periodically collect the weather forecast and store it to a CSV file.
 
 ## Description
 
-A longer description of your project goes here...
-
-
-## Note
-
-This project has been set up using PyScaffold 3.2.3. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
+An extensible weather collector that will call various weather APIs to collect the weather forecast.
