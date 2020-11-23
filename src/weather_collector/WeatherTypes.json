@@ -1,0 +1,167 @@
+{
+	"Date/Time": {
+		"Description": "Date/time",
+		"Type": "Datetime"
+	},
+	"Collection Time": {
+		"Description": "Time that the API was called",
+		"Type": "Datetime"
+	},
+	"Sunrise": {
+		"Description": "Time of sunrise",
+		"Type": "Datetime"
+	},
+	"Sunset": {
+		"Description": "Time of sunset",
+		"Type": "Datetime"
+	},
+	"Temperature": {
+		"Description": "Outdoor dry-bulb temperature",
+		"Type": "Temperature"
+	},
+	"Min Temperature": {
+		"Description": "Minimum temperature",
+		"Type": "Temperature"
+	},
+	"Max Temperature": {
+		"Description": "Maximum temperature",
+		"Type": "Temperature"
+	},
+	"Day Temperature": {
+		"Description": "Average daytime temperature",
+		"Type": "Temperature"
+	},
+	"Morning Temperature": {
+		"Description": "Morning temperature",
+		"Type": "Temperature"
+	},
+	"Evening Temperature": {
+		"Description": "Evening temperature",
+		"Type": "Temperature"
+	},
+	"Night Temperature": {
+		"Description": "Night temperature",
+		"Type": "Temperature"
+	},
+	"Minimum Temperature": {
+		"Description": "Minimum temperature",
+		"Type": "Temperature"
+	},
+	"Maximum Temperature": {
+		"Description": "Maximum temperature",
+		"Type": "Temperature"
+	},
+	"Feels Like Temperature": {
+		"Description": "Feels like temperature",
+		"Type": "Temperature"
+	},
+	"Pressure": {
+		"Description": "Atmospheric pressure",
+		"Type": "Pressure"
+	},
+	"Relative Humidity": {
+		"Description": "Relative humidity",
+		"Type": "Percentage"
+	},
+	"Dew Point": {
+		"Description": "Dew point temperature",
+		"Type": "Temperature"
+	},
+	"Clouds": {
+		"Description": "Cloudiness",
+		"Type": "Percentage"
+	},
+	"Visibility": {
+		"Description": "Visibility",
+		"Type": "Length"
+	},
+	"Wind Speed": {
+		"Description": "Wind speed",
+		"Type": "Speed"
+	},
+	"Wind Direction": {
+		"Description": "Wind direction",
+		"Type": "Angle"
+	},
+	"UV Index": {
+		"Description": "UV index",
+		"Type": "Unitless"
+	},
+	"OpenWeather Temperature Object": {
+		"Points": {
+			"Morning Temperature": {
+				"Key": "morn",
+				"Optional": true
+			},
+			"Day Temperature": {
+				"Key": "day",
+				"Optional": true
+			},
+			"Evening Temperature": {
+				"Key": "eve",
+				"Optional": true
+			},
+			"Night Temperature": {
+				"Key": "night",
+				"Optional": true
+			},
+			"Minimum Temperature": {
+				"Key": "min",
+				"Optional": true
+			},
+			"Maximum Temperature": {
+				"Key": "max",
+				"Optional": true
+			}
+		},
+		"Description": "OpenWeather Temperature Point Collection",
+		"Type": "Temperature"
+	},
+	"OpenWeather Weather Object": {
+		"Points": {
+			"Date/Time": "dt",
+			"Temperature": {
+				"Type": "OpenWeather Temperature Object",
+				"Key": "temp"
+			},
+			"Feels Like Temperature": {
+				"Type": "OpenWeather Temperature Object",
+				"Key": "feels_like"
+			},
+			"Pressure": "pressure",
+			"Relative Humidity": "humidity",
+			"Dew Point": "dew_point",
+			"Clouds": "clouds",
+			"Visibility": {
+				"Key": "visibility",
+				"Optional": true
+			},
+			"Wind Speed": "wind_speed",
+			"Wind Direction": "wind_deg",
+			"Sunrise": {
+				"Key": "sunrise",
+				"Optional": true
+			},
+			"Sunset": {
+				"Key": "sunset",
+				"Optional": true
+			},
+			"UV Index": {
+				"Key": "uvi",
+				"Optional": true
+			}
+		},
+		"Description": "OpenWeather Weather Point Collection",
+		"Type": "WeatherGroup"
+	},
+	"WeatherGov Weather Object": {
+		"Points": {
+			"Date/Time": "startTime",
+			"Temperature": "temperature",
+			"Wind Speed": "windSpeed",
+			"Wind Direction": "windDirection"
+		},
+		"Description": "OpenWeather Temperature Point Collection",
+		"Type": "WeatherGroup"
+	}
+}

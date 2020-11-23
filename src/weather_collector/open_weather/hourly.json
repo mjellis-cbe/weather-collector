@@ -1,0 +1,7 @@
+{
+	"Filename": "Hourly_#<date>%Y_%m_%d_%H_%M#.csv",
+	"Append": false,
+	"Data": {
+		"hourly": "OpenWeather Weather Object"
+	}
+}

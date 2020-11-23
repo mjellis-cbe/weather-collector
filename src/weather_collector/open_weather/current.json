@@ -1,0 +1,8 @@
+{
+	"Filename": "Current_#<date>%Y_%m_%d#.csv",
+	"Append": true,
+	"Data": {
+		"current": "OpenWeather Weather Object",
+		"!now": "Collection Time"
+	}
+}

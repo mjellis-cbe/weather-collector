@@ -1,47 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-This is a skeleton file that can serve as a starting point for a Python
-console script. To run this script uncomment the following lines in the
-[options.entry_points] section in setup.cfg:
-
-    console_scripts =
-         fibonacci = weather_collector.skeleton:run
-
-Then run `python setup.py install` which will install the command `fibonacci`
-inside your current environment.
-Besides console scripts, the header (i.e. until _logger...) of this file can
-also be used as template for Python modules.
-
-Note: This skeleton file can be safely removed if not needed!
+Example runner for weather collector
 """
 
 import argparse
+import json
+import os
+import sched
 import sys
+import time
 import logging
 
 from weather_collector import __version__
+from weather_collector.caller import Collector
 
 __author__ = "Matt Ellis"
 __copyright__ = "Matt Ellis"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
-
-
-def fib(n):
-    """Fibonacci example function
-
-    Args:
-      n (int): integer
-
-    Returns:
-      int: n-th Fibonacci number
-    """
-    assert n > 0
-    a, b = 1, 1
-    for i in range(n-1):
-        a, b = b, a+b
-    return a
 
 
 def parse_args(args):
@@ -54,16 +31,19 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(
-        description="Just a Fibonacci demonstration")
+        description="Weather collector runner")
     parser.add_argument(
         "--version",
         action="version",
-        version="weather-collector {ver}".format(ver=__version__))
+        version="weather-collector {ver}".
+                format(ver=__version__))
     parser.add_argument(
-        dest="n",
-        help="n-th Fibonacci number",
-        type=int,
-        metavar="INT")
+        '-c',
+        '--config',
+        dest="config",
+        help="Configuration file",
+        type=str,
+        required=True)
     parser.add_argument(
         "-v",
         "--verbose",
@@ -100,9 +80,22 @@ def main(args):
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
-    _logger.debug("Starting crazy calculations...")
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
-    _logger.info("Script ends here")
+    _logger.debug("Starting weather collector...")
+    with open(args.config, 'r') as config_file:
+        config = json.load(config_file)
+    config_dir = os.path.dirname(args.config)
+
+    collector = Collector(config=config)
+    sch = sched.scheduler(time.time, time.sleep)
+
+    def do_collect(sch2):
+        _logger.debug('Running collector')
+        collector.collect(config_dir=config_dir,
+                          data_dir=config['Data Directory'])
+        sch.enter(5*60, 1, do_collect, (sch2,))
+
+    sch.enter(5*60, 1, do_collect, (sch,))
+    sch.run()
 
 
 def run():

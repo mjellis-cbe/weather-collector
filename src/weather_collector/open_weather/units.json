@@ -1,0 +1,10 @@
+{
+	"Temperature": "K",
+	"Pressure": "hPa",
+	"Percentage": "%",
+	"Length": "m",
+	"Speed": "m/s",
+	"Angle": "degrees",
+	"Unitless": "",
+	"Datetime": "UTC"
+}

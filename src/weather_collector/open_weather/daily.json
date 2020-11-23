@@ -1,0 +1,7 @@
+{
+	"Filename": "Daily_#<date>%Y_%m_%d_%H_%M#.csv",
+	"Append": false,
+	"Data": {
+		"daily": "OpenWeather Weather Object"
+	}
+}
