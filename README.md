@@ -2,6 +2,10 @@
 
 Periodically collect the weather forecast and store it to a CSV file.
 
+## Contributing
+
+If you find this project useful, please consider contributing a feature, improvement, or documentation by creating a pull request. Please refer to the Project TODOs below or Issues on Github.
+
 ## Quick Reference
 
 ### Installation
