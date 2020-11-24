@@ -2,6 +2,23 @@
 
 Periodically collect the weather forecast and store it to a CSV file.
 
+## Quick Reference
+
+### Installation
+
+- Requirements:
+	- Python 3.8 (probably other Python 3 versions will work)
+	- Python packages: `pandas` (`pyscaffold` for development)
+- Setup process (inside a `virtualenv`):
+```bash
+$ python -m venv .venv
+$ source .venv/bin/activate
+$ pip install pandas
+$ python setup.py build
+$ python seutp.py install
+```
+- If you want to install it globally, omit the first two commands
+
 ## Description
 
 An extensible weather collector that will call various weather APIs to collect the weather forecast. The API return message is interpreted as a `JSON` string, which is converted to a `dict`.
@@ -53,6 +70,7 @@ where the key is the name of the object. The fields defining each object are:
 #### `config.json`
 
 API-specific configuration. Fields:
+
 - `URL`: API call URL
 - `Name`: Name of API
 - `Call Frequency`: Call frequency in minutes
@@ -61,8 +79,9 @@ API-specific configuration. Fields:
 #### `Units.json`
 
 API-specific unit configuration:
-- Keys: Category of quantity
-- Name: Unit
+
+- `Keys`: Category of quantity
+- `Name`: Unit
 
 #### Data File `*.json`
 
@@ -72,27 +91,24 @@ API-specific data files are generated for each data file (every `.json` that is 
 - `Data`: List of key-values. The key is the key to look in the returned `dict` and the value is the expected object type. Special keys:
 	- `!now`: refers to the collection time (i.e., time that the API was called)
 
-### Dataframe
+### Data Saved to a CSV File
 
-From the returned data the is put into a `pandas` `DataFrame`. Ultimately, the data must be saved to:
+The data is ultimately saved to a `csv` file. Specifically, from the returned data the is put into a `pandas` `DataFrame`. Ultimately, the data must be saved to:
 ```
-data/<APIName>/<CallKey>/<Filename>
+<data_dir>/<APIName>/<Filename>
 ```
-
-### Saving Data
-
-The data is ultimately saved to a `csv` file.
-
 
 ## Project TODOs
 
-- Create weather.gov API
+- Update how the data is saved (see section above)
+- Create weather.gov API configuration
 - Test weather.gov API
-- Implement the parse data
 - How output directory should be configured?
 	- Maybe, a configuration file in `~/.config`?
 - If response takes longer that `x` time, stop waiting for a response. It is assumed that most APIs will return the time associated with each forecast, so this should not be an issue for determining what time the forecasts are associated with.
 - Location of `WeatherTypes.json` in final config directory?
 - Uninstall `weather_collector` from `virtualenv` (probably just create a fresh virtualenv
-- Make sure that the call is on the clock (:00, :05, ...) and no creep in time
-- Automated build (move to GitHub?)
+- Make sure that the call is on the clock (:00, :05, ...)
+- Fix creep in call time time (i.e., it runs every 5 minutes after each task completes)
+- Automated build
+- Clean-up `setup.cfg`
