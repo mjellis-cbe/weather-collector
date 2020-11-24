@@ -161,7 +161,7 @@
 			"Wind Speed": "windSpeed",
 			"Wind Direction": "windDirection"
 		},
-		"Description": "OpenWeather Temperature Point Collection",
+		"Description": "WeatherGov Weather Point Collection",
 		"Type": "WeatherGroup"
 	}
 }

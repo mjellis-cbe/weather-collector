@@ -95,3 +95,4 @@ The data is ultimately saved to a `csv` file.
 - Location of `WeatherTypes.json` in final config directory?
 - Uninstall `weather_collector` from `virtualenv` (probably just create a fresh virtualenv
 - Make sure that the call is on the clock (:00, :05, ...) and no creep in time
+- Automated build (move to GitHub?)
