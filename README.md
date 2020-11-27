@@ -111,8 +111,5 @@ The data is ultimately saved to a `csv` file. Specifically, from the returned da
 	- Maybe, a configuration file in `~/.config`?
 - If response takes longer that `x` time, stop waiting for a response. It is assumed that most APIs will return the time associated with each forecast, so this should not be an issue for determining what time the forecasts are associated with.
 - Location of `WeatherTypes.json` in final config directory?
-- Uninstall `weather_collector` from `virtualenv` (probably just create a fresh virtualenv
-- Make sure that the call is on the clock (:00, :05, ...)
-- Fix creep in call time time (i.e., it runs every 5 minutes after each task completes)
 - Automated build
 - Clean-up `setup.cfg`

@@ -6,13 +6,13 @@ Example runner for weather collector
 import argparse
 import json
 import os
-import sched
 import sys
 import time
 import logging
 
 from weather_collector import __version__
 from weather_collector.caller import Collector
+from weather_collector.runner import SynchronousEvent
 
 __author__ = "Matt Ellis"
 __copyright__ = "Matt Ellis"
@@ -77,6 +77,9 @@ def main(args):
 
     Args:
       args ([str]): command line parameter list
+
+    Returns:
+      SynchronousEvent: event runner
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
@@ -84,18 +87,17 @@ def main(args):
     with open(args.config, 'r') as config_file:
         config = json.load(config_file)
     config_dir = os.path.dirname(args.config)
-
     collector = Collector(config=config)
-    sch = sched.scheduler(time.time, time.sleep)
+    config = collector.load_config()
 
-    def do_collect(sch2):
+    def do_collect():
         _logger.debug('Running collector')
         collector.collect(config_dir=config_dir,
                           data_dir=config['Data Directory'])
-        sch.enter(5*60, 1, do_collect, (sch2,))
 
-    sch.enter(5*60, 1, do_collect, (sch,))
-    sch.run()
+    event = SynchronousEvent(config['Call Frequency']*60, do_collect)
+    event.start()
+    return event
 
 
 def run():
