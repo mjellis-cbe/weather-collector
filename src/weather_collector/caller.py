@@ -122,6 +122,7 @@ class Caller:
         try:
             output = requests.get(config_data["URL"])
         except Exception as unknown_ex:
+            output = None
             _logger.warning(unknown_ex)
 
         # pylint: disable=protected-access
