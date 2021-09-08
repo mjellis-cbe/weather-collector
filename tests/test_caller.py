@@ -5,7 +5,7 @@ Tests API Caller
 import unittest
 from weather_collector.caller import Caller
 
-from .helpers import (
+from tests.helpers import (
     get_example_response,
     get_example_weather_config,
 )

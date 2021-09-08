@@ -42,11 +42,11 @@ def create_file_name(fmt_code, date):
         fmt_code (str): Formatting code
         date (dt.datetime): Date/time
     """
-    parts = fmt_code.split('#')
+    parts = fmt_code.split("#")
     for index, part in enumerate(parts):
-        if part[0:6] == '<date>':
+        if part[0:6] == "<date>":
             parts[index] = date.strftime(part[6:])
-    return ''.join(parts)
+    return "".join(parts)
 
 
 def format_data(data, units):
@@ -62,23 +62,23 @@ def format_data(data, units):
     types = WeatherObjects.get_obj()
     r_data = {}
     for key, val in data.items():
-        obj_type = key.split('.')[-1]
+        obj_type = key.split(".")[-1]
 
-        pnt_t = types.types[obj_type]['Type']
+        pnt_t = types.types[obj_type]["Type"]
         if pnt_t not in units:
-            msg = f'Object type {pnt_t} is not found'
+            msg = f"Object type {pnt_t} is not found"
             _logger.error(msg)
             raise KeyError(msg)
 
         unit = units[pnt_t]
         # TODO: Make this a bit more generic..
-        if pnt_t.lower() == 'datetime':
-            if unit.lower() == 'utc':
+        if pnt_t.lower() == "datetime":
+            if unit.lower() == "utc":
                 val = [dt.datetime.utcfromtimestamp(d) for d in val]
-        elif unit != '':
-            key += '#' + unit
-        if obj_type == 'Date/Time':
-            key = 'Date/Time'
+        elif unit != "":
+            key += "#" + unit
+        if obj_type == "Date/Time":
+            key = "Date/Time"
         r_data[key] = val
     return r_data
 
@@ -94,11 +94,12 @@ class Caller:
         config (Union[str, dict]): either the config file path or the
             configuration data structure
     """
+
     def __init__(self, **kwargs):
         self.config = None
         _set_attr_if_exist(self, kwargs)
         if self.config is None:
-            _logger.error('Must set the caller configuration')
+            _logger.error("Must set the caller configuration")
 
     def call_api(self):
         """Call the API.
@@ -108,37 +109,44 @@ class Caller:
             API; contains key: "CallTime" and "Response"
         """
         if isinstance(self.config, str):
-            with open(self.config, 'r') as config_file:
+            with open(self.config, "r") as config_file:
                 config_data = json.load(config_file)
         else:
             config_data = self.config
-        if 'URL' not in config_data or config_data['URL'] == '':
-            msg = f'Must have a valid URL in config: {self.config}'
+        if "URL" not in config_data or config_data["URL"] == "":
+            msg = f"Must have a valid URL in config: {self.config}"
             _logger.error(msg)
             raise KeyError(msg)
 
         now = dt.datetime.now().astimezone(pytz.utc)
-        output = requests.get(config_data['URL'])
+        try:
+            output = requests.get(config_data["URL"])
+        except Exception as unknown_ex:
+            _logger.warning(unknown_ex)
+
         # pylint: disable=protected-access
-        if output.status_code == 200:
-            name = '' if 'Name' not in config_data else config_data['Name']+' '
-            url = config_data['URL']
-            msg = f'Successfully called {name}API: {url}'
+        url = config_data["URL"]
+        if hasattr(output, 'status_code') and output.status_code == 200:
+            name = (
+                "" if "Name" not in config_data else config_data["Name"] + " "
+            )
+            msg = f"Successfully called {name}API: {url}"
             _logger.info(msg)
-            output = {'CallTime': now, 'Response': output.json()}
+            output = {"CallTime": now, "Response": output.json()}
         else:
             # TODO: Need to deal with failures
-            msg = (f'Failed to call API {url}\n{output.status_code}: ' +
-                   requests.status_codes._codes[output.status_code][0])
+            msg = (
+                f"Failed to call API {url}\n{output.status_code}: "
+                + requests.status_codes._codes[output.status_code][0]
+            )
             _logger.warning(msg)
             output = None
         return output
 
     def failure_handler(self):
-        """Handle failures.
-        """
+        """Handle failures."""
         # TODO: Implement failure handler?
-        raise NotImplementedError('This method is not implemented')
+        raise NotImplementedError("This method is not implemented")
 
 
 class Collector:
@@ -148,11 +156,12 @@ class Collector:
         config (Union[str, dict]): either the config file path or the
             configuration data structure
     """
+
     def __init__(self, **kwargs):
         self.config = None
         _set_attr_if_exist(self, kwargs)
         if self.config is None:
-            msg = 'Must set the caller configuration'
+            msg = "Must set the caller configuration"
             _logger.error(msg)
             raise ValueError(msg)
 
@@ -162,7 +171,7 @@ class Collector:
         """
         if isinstance(self.config, dict):
             return self.config
-        with open(self.config, 'r') as config_file:
+        with open(self.config, "r") as config_file:
             return json.load(config_file)
 
     def get_json_files_in_dir(self, config_dir):
@@ -175,13 +184,19 @@ class Collector:
             list: JSON files in directory (not named unit.json)
         """
         if config_dir is None:
-            msg = 'Must set the collection configuration directory'
+            msg = "Must set the collection configuration directory"
             _logger.error(msg)
             raise ValueError(msg)
-        _logger.debug('Searching %s for JSON files associated with %s',
-                      config_dir, self.load_config()['Name'])
-        return [file for file in glob.glob(config_dir + '/*.json')
-                if os.path.basename(file) not in ['units.json', 'config.json']]
+        _logger.debug(
+            "Searching %s for JSON files associated with %s",
+            config_dir,
+            self.load_config()["Name"],
+        )
+        return [
+            file
+            for file in glob.glob(config_dir + "/*.json")
+            if os.path.basename(file) not in ["units.json", "config.json"]
+        ]
 
     def collect(self, config_dir, data_dir):
         """Collects data and parse
@@ -194,45 +209,53 @@ class Collector:
 
         # Call the API
         response = Caller(config=self.config).call_api()
+        if response is None:
+            return
 
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
 
-        with open(os.path.join(config_dir, 'units.json'), 'r') as file:
+        with open(os.path.join(config_dir, "units.json"), "r") as file:
             units = json.load(file)
 
         # TODO: makes call, formats data, and saves data (too much)
         # Currently combining since JSON is
         for data_config in self.get_json_files_in_dir(config_dir):
-            with open(data_config, 'r') as json_file:
+            with open(data_config, "r") as json_file:
                 data_config = json.load(json_file)
 
-            if 'Append' not in data_config:
-                data_config['Append'] = False
+            if "Append" not in data_config:
+                data_config["Append"] = False
 
             # Get the data
             cur_data = {}
             for attr in data_config["Data"].keys():
-                if attr == '!now':
-                    cur_data['Collection Time'] = response['CallTime']
+                if attr == "!now":
+                    cur_data["Collection Time"] = response["CallTime"]
                     continue
 
-                cur_response = response['Response']
-                for key in attr.split('.'):
+                cur_response = response["Response"]
+                for key in attr.split("."):
                     cur_response = cur_response[key]
 
                 cur_response = objs.parse_object_type(
-                        cur_response.copy(),
-                        data_config["Data"][attr])
+                    cur_response.copy(), data_config["Data"][attr]
+                )
                 cur_data.update(format_data(cur_response, units))
 
-            index = cur_data['Date/Time']
-            del cur_data['Date/Time']
+            index = cur_data["Date/Time"]
+            del cur_data["Date/Time"]
             file_name = os.path.join(
-                data_dir, create_file_name(data_config['Filename'],
-                                           response['CallTime']))
-            self.save_data(pd.DataFrame(index=index, data=cur_data),
-                           file_name, data_config['Append'])
+                data_dir,
+                create_file_name(
+                    data_config["Filename"], response["CallTime"]
+                ),
+            )
+            self.save_data(
+                pd.DataFrame(index=index, data=cur_data),
+                file_name,
+                data_config["Append"],
+            )
 
     def save_data(self, data, path, append):
         """Save data
@@ -242,19 +265,19 @@ class Collector:
             path (str): Path of file to save
             append (bool): Append to existing file if exists
         """
-        _logger.debug('Saving data to %s', path)
-        api_name = self.load_config()['Name']
-        success_msg = f'Successfully saved data from {api_name}'
+        _logger.debug("Saving data to %s", path)
+        api_name = self.load_config()["Name"]
+        success_msg = f"Successfully saved data from {api_name}"
         if os.path.exists(path) and append:
             # Open file and append results
-            with open(path, 'a') as file:
+            with open(path, "a") as file:
                 data.to_csv(file, header=False)
             _logger.info(success_msg)
             return
 
         if os.path.exists(path):
             # Remove file
-            _logger.warning('File %s exists!; overwriting it', path)
+            _logger.warning("File %s exists!; overwriting it", path)
             os.remove(path)
 
         data.to_csv(path)
@@ -270,8 +293,9 @@ class WeatherObjects:
     Attributes:
         types (dict): All defined objects
     """
+
     def __init__(self, path):
-        with open(path, 'r') as json_file:
+        with open(path, "r") as json_file:
             self.types = json.load(json_file)
 
     def parse_object_type(self, data, obj_type, key=None):
@@ -286,7 +310,7 @@ class WeatherObjects:
             dict: key-value pair of key and list of values
         """
         if obj_type not in self.types:
-            msg = f'The key {obj_type} is not defined in the Weather types'
+            msg = f"The key {obj_type} is not defined in the Weather types"
             _logger.error(msg)
             raise KeyError(msg)
 
@@ -299,34 +323,35 @@ class WeatherObjects:
         if key is None:
             key = obj_type
 
-        if 'Points' in cur_type:
+        if "Points" in cur_type:
             if not any([isinstance(d, dict) for d in data]):
                 fmt_data.update({key: data})
                 return fmt_data
 
-            for obj_t, pnt in cur_type['Points'].items():
+            for obj_t, pnt in cur_type["Points"].items():
                 # Could be a string or a dict with Key, Optional and/or Type
-                pnt = pnt.copy() if not isinstance(pnt, str) else {'Key': pnt}
-                if 'Optional' not in pnt:
-                    pnt['Optional'] = False
+                pnt = pnt.copy() if not isinstance(pnt, str) else {"Key": pnt}
+                if "Optional" not in pnt:
+                    pnt["Optional"] = False
 
-                dat = [d.get(pnt['Key'], float('nan')) for d in data]
-                if (not pnt['Optional']
-                        and any([d == float('nan') for d in dat])):
-                    msg = f'Type {obj_type} is missing data'
+                dat = [d.get(pnt["Key"], float("nan")) for d in data]
+                if not pnt["Optional"] and any(
+                    [d == float("nan") for d in dat]
+                ):
+                    msg = f"Type {obj_type} is missing data"
                     _logger.error(msg)
                     raise ValueError(msg)
 
-                if (pnt['Optional']
-                        and all([math.isnan(d) for d in dat])):
+                if pnt["Optional"] and all([math.isnan(d) for d in dat]):
                     continue
 
-                new_key = key + '.' + obj_t if key != '' else obj_t
-                if ('Type' not in pnt or
-                        (len(dat) > 0 and not isinstance(dat[0], dict))):
-                    pnt['Type'] = obj_t
+                new_key = key + "." + obj_t if key != "" else obj_t
+                if "Type" not in pnt or (
+                    len(dat) > 0 and not isinstance(dat[0], dict)
+                ):
+                    pnt["Type"] = obj_t
 
-                cur_dat = self.parse_object_type(dat, pnt['Type'], key=new_key)
+                cur_dat = self.parse_object_type(dat, pnt["Type"], key=new_key)
                 fmt_data.update(cur_dat)
         else:
             fmt_data[key] = data
@@ -337,5 +362,5 @@ class WeatherObjects:
     def get_obj():
         """Get a Weather object"""
         cur_path = os.path.dirname(os.path.abspath(__file__))
-        wk_path = os.path.join(cur_path, 'WeatherTypes.json')
+        wk_path = os.path.join(cur_path, "WeatherTypes.json")
         return WeatherObjects(wk_path)

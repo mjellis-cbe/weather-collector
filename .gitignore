@@ -48,6 +48,8 @@ MANIFEST
 
 # Per-project virtualenvs
 .venv*/
+venv/
 
 config.json
 data/
+tests/output

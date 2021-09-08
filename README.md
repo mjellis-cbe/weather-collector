@@ -102,6 +102,15 @@ The data is ultimately saved to a `csv` file. Specifically, from the returned da
 <data_dir>/<APIName>/<Filename>
 ```
 
+## Scheduling References
+
+- [schedule from pypi](https://pypi.org/project/schedule/); [Github repo here](https://github.com/dbader/schedule)
+- [Another scheduling app](https://github.com/mrhwick/schedule)
+- StackOverflow
+	- [Thread 1](https://stackoverflow.com/questions/22715086/scheduling-python-script-to-run-every-hour-accurately)
+	- [Thread 2](https://stackoverflow.com/questions/3393612/run-certain-code-every-n-seconds)
+	- [Thread 3 (and one used)](https://stackoverflow.com/questions/8600161/executing-periodic-actions-in-python)
+
 ## Project TODOs
 
 - Update how the data is saved (see section above)
