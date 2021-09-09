@@ -119,10 +119,10 @@ class Caller:
             raise KeyError(msg)
 
         now = dt.datetime.now().astimezone(pytz.utc)
+        output = None
         try:
             output = requests.get(config_data["URL"])
         except Exception as unknown_ex:
-            output = None
             _logger.warning(unknown_ex)
 
         # pylint: disable=protected-access
@@ -136,10 +136,15 @@ class Caller:
             output = {"CallTime": now, "Response": output.json()}
         else:
             # TODO: Need to deal with failures
-            msg = (
-                f"Failed to call API {url}\n{output.status_code}: "
-                + requests.status_codes._codes[output.status_code][0]
-            )
+            msg = "Failed to call API{url}\n"
+            if hasattr(output, "status_code"):
+                msg += (
+                    f"{output.status_code}: "
+                    + requests.status_codes._codes[output.status_code][0]
+                )
+            else:
+                msg += "No output returned"
+
             _logger.warning(msg)
             output = None
         return output
